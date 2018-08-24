@@ -27,6 +27,14 @@ class Config(dict):
         self.github.username = self._config['github'].get('username', '')
         self.github.password = self._config['github'].get('password', '')
 
+        self.jira = ConfObject()
+        self.jira.enabled = True
+        self.jira.url = self._config['jira'].get('url', '')
+        self.jira.name = self._config['jira'].get('name', 'Jira')
+        self.jira.username = self._config['jira'].get('username', '')
+        self.jira.password = self._config['jira'].get('password', '')
+        self.jira.filterid = self._config['jira'].get('filterid', '')
+
 
 if __name__ == '__main__':
     c = Config()

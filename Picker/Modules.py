@@ -61,3 +61,33 @@ class Jenkins:
         lst = []
         for i, j in enumerate(data['jobs']):
             self._picker.add_to_category(self._conf.jenkins.name, (j['name'], i % 5, j['url']))
+
+class Jira:
+    def __init__(self, conf, picker):
+        self._picker = picker
+        self._conf = conf
+        if not conf.jira.enabled:
+            return
+        picker.add_category(conf.jira.name, [])
+        j = threading.Thread(target=self.get_jira, daemon=True)
+        j.start()
+
+    def get_jira(self):
+        # TODO error handling...
+        if not self._conf.jira.url:
+            return
+        if not self._conf.jira.username:
+            return
+        if not self._conf.jira.password:
+            return
+        if not self._conf.jira.filterid:
+            return
+        self._auth = requests.auth.HTTPBasicAuth(self._conf.jira.username, self._conf.jira.password)
+        r = requests.get(self._conf.jira.url + '/rest/api/2/filter/' + self._conf.jira.filterid, auth=self._auth)
+        data = json.loads(r.text)
+        searchurl = data['searchUrl']
+        r = requests.get(searchurl, auth=self._auth)
+        data = json.loads(r.text)
+        for i in data['issues']:
+            issue_name = '[%s] %s' % (i['key'], i['fields']['summary'])
+            self._picker.add_to_category(self._conf.jira.name, (issue_name, 0, 'todo url'))

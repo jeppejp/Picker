@@ -17,6 +17,7 @@ def main():
     
     github = Modules.Github(conf, p)
     jenkins = Modules.Jenkins(conf, p)
+    jira = Modules.Jira(conf, p)
 
     time.sleep(2)
     print(p.pick())
