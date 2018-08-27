@@ -31,8 +31,6 @@ def main():
 
 def start(args):
     create_log_dir()
-    args.debug = True
-    args.error_stdout = True
     # init log
     logger = logging.getLogger('picker')
     filehandler = logging.FileHandler(os.path.expanduser('~/.cache/picker/picker.log'))
