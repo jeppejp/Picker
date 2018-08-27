@@ -1,14 +1,14 @@
 import curses
 
-NOCOL = -1
-BLACK = curses.COLOR_BLACK
-RED = curses.COLOR_RED
-GREEN = curses.COLOR_GREEN
-YELLOW = curses.COLOR_YELLOW
-BLUE = curses.COLOR_BLUE
-MAGENTA = curses.COLOR_MAGENTA
-CYAN = curses.COLOR_CYAN
-WHITE = curses.COLOR_WHITE
+BLACK_ON_WHITE = 10
+RED = 1
+GREEN = 2
+YELLOW = 4
+BLUE = 3
+MAGENTA = 0
+CYAN = 0
+WHITE = 0
+NOCOL = 0
 
 
 class Picker:
@@ -46,6 +46,7 @@ class Picker:
 
         query = ''
 
+        curses.init_pair(0, curses.COLOR_WHITE, -1)
         curses.init_pair(1, curses.COLOR_RED, -1)
         curses.init_pair(2, curses.COLOR_GREEN, -1)
         curses.init_pair(3, curses.COLOR_BLUE, -1)

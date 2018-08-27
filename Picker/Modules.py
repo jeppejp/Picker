@@ -24,7 +24,7 @@ class Github:
         data = json.loads(req.text)
 
         for x in data:
-            self._picker.add_to_category(self._conf.name, (x['full_name'], Picker.RED))
+            self._picker.add_to_category(self._conf.name, (x['full_name'], Picker.NOCOL, x['html_url']))
 
         if 'Link' in req.headers:
             for tok in req.headers['Link'].split(','):
@@ -51,7 +51,7 @@ class Jenkins:
         data = json.loads(req.text)
         lst = []
         for i, j in enumerate(data['jobs']):
-            self._picker.add_to_category(self._conf.name, (j['name'], i % 5, j['url']))
+            self._picker.add_to_category(self._conf.name, (j['name'], Picker.NOCOL, j['url']))
 
 
 class Jira:
@@ -72,4 +72,5 @@ class Jira:
         data = json.loads(r.text)
         for i in data['issues']:
             issue_name = '[%s] %s' % (i['key'], i['fields']['summary'])
-            self._picker.add_to_category(self._conf.name, (issue_name, 0, 'todo url'))
+            issue_url = '%s/browse/%s' % (self._conf['url'], i['key'])
+            self._picker.add_to_category(self._conf.name, (issue_name, 0, issue_url))

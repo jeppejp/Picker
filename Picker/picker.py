@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import requests
+import subprocess
 import os
 import configparser
 import json
 import curses
-import Picker
+from . import Picker
 import threading
-import Modules
+from . import Modules
 import time
 
 
@@ -22,7 +23,7 @@ def main():
         if section.lower() == 'general':
             general_config = config[section]
 
-    p = Picker.Picker(general_config)
+    p = Picker(general_config)
 
     for section in config.sections():
         if section.lower() == 'general':
@@ -39,7 +40,8 @@ def main():
             else:
                 raise Exception('Unhandled type [%s] for section [%s]' % (config[section]['type'], section))
 
-    print(p.pick())
+    res = p.pick()
+    subprocess.check_output(['xdg-open', res[2]])
 
 
 if __name__ == '__main__':
