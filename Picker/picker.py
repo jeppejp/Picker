@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import requests
+import argparse
 import subprocess
 import os
 import configparser
@@ -9,9 +10,49 @@ from . import Picker
 import threading
 from . import Modules
 import time
+import logging
+
+
+def create_log_dir():
+    try:
+        os.makedirs(os.path.expanduser('~/.cache/picker/'))
+    except FileExistsError:
+        pass
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Picker')
+    parser.add_argument('-d', '--debug', action='store_true', default=False, help='Set log level to debug')
+    parser.add_argument('-e', '--error-stdout', action='store_true', default=False,
+                        help='Do not start curses interface and output logs to stdout')
+    args = parser.parse_args()
+    start(args)
+
+
+def start(args):
+    create_log_dir()
+    args.debug = True
+    args.error_stdout = True
+    # init log
+    logger = logging.getLogger('picker')
+    filehandler = logging.FileHandler(os.path.expanduser('~/.cache/picker/picker.log'))
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    filehandler.setFormatter(formatter)
+    if args.debug:
+        lvl = logging.DEBUG
+    else:
+        lvl = logging.WARNING
+
+    logger.setLevel(lvl)
+    filehandler.setLevel(lvl)
+    logger.addHandler(filehandler)
+    if args.error_stdout:
+        consolehandler = logging.StreamHandler()
+        consolehandler.setLevel(lvl)
+        consolehandler.setFormatter(formatter)
+        logger.addHandler(consolehandler)
+
     conf_file = os.path.expanduser('~/.config/picker/picker.conf')
     config = configparser.ConfigParser()
     config.read(conf_file)
@@ -40,9 +81,15 @@ def main():
             else:
                 raise Exception('Unhandled type [%s] for section [%s]' % (config[section]['type'], section))
 
-    res = p.pick()
-    if res:
-        subprocess.check_output(['xdg-open', res[2]])
+    if not args.error_stdout:
+        res = p.pick()
+        if res:
+            subprocess.check_output(['xdg-open', res[2]])
+    else:
+        try:
+            time.sleep(100)
+        except KeyboardInterrupt:
+            pass
 
 
 if __name__ == '__main__':
