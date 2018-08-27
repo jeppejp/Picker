@@ -53,6 +53,7 @@ class Picker:
         curses.init_pair(4, curses.COLOR_YELLOW, -1)
 
         curses.init_pair(10, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        curses.curs_set(False)
 
         idx = 0
         cat_idx = 0
@@ -68,7 +69,7 @@ class Picker:
             for t in self._categories[cat_idx]['lst']:
                 if self._has_match(t[0], query):
                     matches.append(t)
-            stdscr.clear()
+            stdscr.refresh()
             offset = 0
             for i, c in enumerate(cat_names):
                 if i == cat_idx:
@@ -77,14 +78,18 @@ class Picker:
                     stdscr.addstr(0, offset, c)
                 offset += len(c) + 4
 
-            for i, t in enumerate(matches[:maxy - 4]):
-                if i == idx:
-                    stdscr.addstr(i + 3, 0, '> ' + t[0], curses.color_pair(t[1]))
+            for i in range(0, maxy - 4):
+                if i < len(matches):
+                    t = matches[i]
+                    if i == idx:
+                        stdscr.addstr(i + 3, 0, '> %-100s' % t[0], curses.color_pair(t[1]))
+                    else:
+                        stdscr.addstr(i + 3, 0, '  %-100s' % t[0], curses.color_pair(t[1]))
                 else:
-                    stdscr.addstr(i + 3, 0, '  ' + t[0], curses.color_pair(t[1]))
+                    stdscr.addstr(i + 3, 0, ' ' * maxx)
 
             # stdscr.addstr(2, 0, str(s))  # DEBUG
-            stdscr.addstr(1, 0, "SEARCH: " + query)
+            stdscr.addstr(1, 0, "SEARCH: %-100s" % query)
             try:
                 s = stdscr.getch()
             except KeyboardInterrupt:

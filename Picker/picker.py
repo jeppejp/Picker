@@ -41,7 +41,8 @@ def main():
                 raise Exception('Unhandled type [%s] for section [%s]' % (config[section]['type'], section))
 
     res = p.pick()
-    subprocess.check_output(['xdg-open', res[2]])
+    if res:
+        subprocess.check_output(['xdg-open', res[2]])
 
 
 if __name__ == '__main__':
