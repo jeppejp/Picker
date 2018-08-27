@@ -1,5 +1,4 @@
 import curses
-import Config
 
 NOCOL = -1
 BLACK = curses.COLOR_BLACK
@@ -13,10 +12,10 @@ WHITE = curses.COLOR_WHITE
 
 
 class Picker:
-    def __init__(self):
+    def __init__(self, config):
         self._result = ''
         self._categories = []
-        self._config = Config.Config()
+        self._config = config
 
     def pick(self):
         curses.wrapper(self._main)
@@ -40,7 +39,6 @@ class Picker:
                 return False
         return True
 
-
     def _main(self, stdscr):
         stdscr.timeout(100)
         curses.start_color()
@@ -54,7 +52,6 @@ class Picker:
         curses.init_pair(4, curses.COLOR_YELLOW, -1)
 
         curses.init_pair(10, curses.COLOR_BLACK, curses.COLOR_WHITE)
-
 
         idx = 0
         cat_idx = 0
@@ -79,47 +76,42 @@ class Picker:
                     stdscr.addstr(0, offset, c)
                 offset += len(c) + 4
 
-
-            for i, t in enumerate(matches[:maxy-4]):
+            for i, t in enumerate(matches[:maxy - 4]):
                 if i == idx:
                     stdscr.addstr(i + 3, 0, '> ' + t[0], curses.color_pair(t[1]))
                 else:
                     stdscr.addstr(i + 3, 0, '  ' + t[0], curses.color_pair(t[1]))
-            
+
             # stdscr.addstr(2, 0, str(s))  # DEBUG
             stdscr.addstr(1, 0, "SEARCH: " + query)
             try:
                 s = stdscr.getch()
             except KeyboardInterrupt:
                 return
-            if s == 27: # ESC
+            if s == 27:  # ESC
                 return
-            elif s == curses.KEY_BACKSPACE: # Backspace
+            elif s == curses.KEY_BACKSPACE:  # Backspace
                 query = query[:-1]
             elif s == 10:
                 self._result = matches[idx]
                 return
-            elif s == curses.KEY_DOWN or \
-                 (self._config.general.hjkl and s == ord('J')):
+            elif s == curses.KEY_DOWN or (self._config.get('hjkl', True) and s == ord('J')):
                 idx += 1
                 idx = min(idx, len(matches) - 1)
-            elif s == curses.KEY_UP or \
-                 (self._config.general.hjkl and s == ord('K')):
+            elif s == curses.KEY_UP or (self._config.get('hjkl', True) and s == ord('K')):
                 idx -= 1
                 idx = max(idx, 0)
-            elif s == curses.KEY_RIGHT or \
-                 (self._config.general.hjkl and s == ord('L')):
+            elif s == curses.KEY_RIGHT or (self._config.get('hjkl', True) and s == ord('L')):
                 cat_idx += 1
                 cat_idx = min(cat_idx, len(cat_names) - 1)
                 query = ''
                 idx = 0
-            elif s == curses.KEY_LEFT or \
-                 (self._config.general.hjkl and s == ord('H')):
+            elif s == curses.KEY_LEFT or (self._config.get('hjkl', True) and s == ord('H')):
                 cat_idx -= 1
                 cat_idx = max(cat_idx, 0)
                 query = ''
                 idx = 0
-            elif s < 256: # perhaps a valid char...
+            elif s < 256:  # perhaps a valid char...
                 try:
                     query += chr(s)
                     idx = 0
