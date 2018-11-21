@@ -66,9 +66,10 @@ class Picker:
         while True:
             matches = []
             (maxy, maxx) = stdscr.getmaxyx()
-            for t in self._categories[cat_idx]['lst']:
-                if self._has_match(t[0], query):
-                    matches.append(t)
+            for c in self._categories:
+                for t in c['lst']:
+                    if self._has_match(t[0], query):
+                        matches.append(t)
             stdscr.refresh()
             offset = 0
             for i, c in enumerate(cat_names):
