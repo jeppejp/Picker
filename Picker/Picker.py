@@ -82,10 +82,10 @@ class Picker:
             for i in range(0, maxy - 4):
                 if i < len(matches):
                     t = matches[i]
+                    output_string = '  {1:{0}s}'.format(maxx, t[0])
                     if i == idx:
-                        stdscr.addstr(i + 3, 0, '> %-100s' % t[0], curses.color_pair(t[1]))
-                    else:
-                        stdscr.addstr(i + 3, 0, '  %-100s' % t[0], curses.color_pair(t[1]))
+                        output_string = '>' + output_string[1:]
+                    stdscr.addstr(i + 3, 0, output_string, curses.color_pair(t[1]))
                 else:
                     stdscr.addstr(i + 3, 0, ' ' * maxx)
 
