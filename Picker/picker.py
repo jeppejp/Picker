@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-import requests
 import argparse
 import subprocess
 import os
 import configparser
-import json
-import curses
 from . import Picker
-import threading
 from . import Modules
 import time
 import logging
