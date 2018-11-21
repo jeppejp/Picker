@@ -88,7 +88,6 @@ class Picker:
                 else:
                     stdscr.addstr(i + 3, 0, ' ' * maxx)
 
-            # stdscr.addstr(2, 0, str(s))  # DEBUG
             stdscr.addstr(1, 0, "SEARCH: %-100s" % query)
             try:
                 s = stdscr.getch()
